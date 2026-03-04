@@ -41,6 +41,17 @@ if arquivo:
     st.write(f'Tipo arquivo: {type(arquivo)}')
     st.write(f'Teste: {uuid.uuid4()}')
 
+    #Salvar arquivo no bucket supabase
+    file_id = str(uuid.uuid4())
+    file_path = f"{vaga_escolhida.name}/{file_id}.pdf"
+    pdf_bytes = arquivo.getvalue()
+
+    supabase.storage.from_("curriculos").upload(
+        file_path,
+        pdf_bytes,
+        {"content-type": "application/pdf"}
+    )
+    st.success("Arquivo Salvo")
 
 
 
