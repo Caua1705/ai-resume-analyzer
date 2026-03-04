@@ -1,11 +1,11 @@
 import streamlit as st
-from src.schemas.analysis_schema import CandidateAnalysis
+from src.schemas.candidate_analysis import CandidateAnalysis
 from src.database.session import SessionLocal
 from src.repositories.job_repository import JobRepository
 from src.database.db_init import criar_tabelas
 from pypdf import PdfReader
 import uuid
-from src.core.supabase_client import supabase
+from src.core.supabase_client import supabase, APIKEY
 import fitz
 import os
 from dotenv import load_dotenv
@@ -13,7 +13,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 
 load_dotenv()
-api_key_model = os.get_env("OPENAI_KEY")
+api_key_model = APIKEY
 
 
 criar_tabelas()
@@ -98,8 +98,16 @@ if arquivo:
     chain = prompt | modelo_estruturado
 
     response = chain.invoke(
-
-        
+        {
+            "job_name": vaga_escolhida.name,
+            "main_activities": vaga_escolhida.main_activities,
+            "prerequisites": vaga_escolhida.prerequisites,
+            "differentials": vaga_escolhida.differentials,
+            "curriculo": texto
+        }
     )
+    st.write(f"Resposta IA: \n\n {response}")
+    st.write(f"Tipo saída: \n\n {type(response)}")
+    st.write(f"Saída em dicionário: \n\n {response.model_dump()}")
 
 
