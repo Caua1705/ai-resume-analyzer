@@ -24,7 +24,13 @@ class Analysis(Base):
         nullable=False
     )
 
+    education_level_id: Mapped[UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("education_levels.id")
+    )
+
     score: Mapped[float | None] = mapped_column(Float)
+
     opinion: Mapped[str | None] = mapped_column(Text)
 
     created_at: Mapped[datetime] = mapped_column(
@@ -33,11 +39,11 @@ class Analysis(Base):
     )
 
     resume: Mapped["Resume"] = relationship(back_populates="analyses")
+
     job: Mapped["Job"] = relationship(back_populates="analyses")
 
-    educations: Mapped[List["Education"]] = relationship(
-        back_populates="analysis",
-        cascade="all, delete"
+    education_level: Mapped["EducationLevel"] = relationship(
+        back_populates="analyses"
     )
 
     languages: Mapped[List["Language"]] = relationship(
