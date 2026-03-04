@@ -66,6 +66,40 @@ if arquivo:
     st.subheader("Texto extraído:")
     st.write(texto)
 
+    
+    #Estrutura de Análise Agente de IA
 
+    prompt = ChatPromptTemplate.from_messages([
+        (
+            "system",
+            "Você é um recrutador técnico especialista em avaliação de candidatos."
+        ),
+        (
+            "human",
+            """
+    Avalie o currículo abaixo com base na vaga.
+
+    VAGA:
+    Nome: {job_name}
+    Atividades: {main_activities}
+    Requisitos: {prerequisites}
+    Diferenciais: {differentials}
+
+    CURRÍCULO:
+    {curriculo}
+    """
+        )
+    ])
+
+    model = ChatOpenAI(model="gpt-4o-mini", api_key=api_key_model)
+
+    modelo_estruturado = model.with_structured_output(CandidateAnalysis)
+
+    chain = prompt | modelo_estruturado
+
+    response = chain.invoke(
+
+        
+    )
 
 
