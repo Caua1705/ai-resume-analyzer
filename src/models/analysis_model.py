@@ -1,16 +1,18 @@
 from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Float, Text, ForeignKey, TIMESTAMP
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.sql import func
-from typing import List
 from src.database.base import Base
 
 
 class Analysis(Base):
     __tablename__ = "analyses"
 
-    id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True)
+    id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True
+    )
 
     resume_id: Mapped[UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -33,20 +35,25 @@ class Analysis(Base):
 
     opinion: Mapped[str | None] = mapped_column(Text)
 
+    strengths: Mapped[str | None] = mapped_column(Text)
+
+    weaknesses: Mapped[str | None] = mapped_column(Text)
+
+    languages: Mapped[list | None] = mapped_column(JSONB)
+
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True),
         server_default=func.now()
     )
 
-    resume: Mapped["Resume"] = relationship(back_populates="analyses")
-
-    job: Mapped["Job"] = relationship(back_populates="analyses")
-
-    education_level: Mapped["EducationLevel"] = relationship(
+    resume: Mapped["Resume"] = relationship(
         back_populates="analyses"
     )
 
-    languages: Mapped[List["Language"]] = relationship(
-        back_populates="analysis",
-        cascade="all, delete"
+    job: Mapped["Job"] = relationship(
+        back_populates="analyses"
+    )
+
+    education_level: Mapped["EducationLevel"] = relationship(
+        back_populates="analyses"
     )
