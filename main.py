@@ -53,6 +53,18 @@ if arquivo:
     )
     st.success("Arquivo Salvo")
 
+    # ===== Extração de texto com PyMuPDF =====
+    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+
+    texto_paginas = []
+
+    for page in doc:
+        texto_paginas.append(page.get_text())
+
+    texto = "\n".join(texto_paginas)
+
+    st.subheader("Texto extraído:")
+    st.write(texto)
 
 
 
