@@ -1,10 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from src.database.base import Base
-from src.core.config import URL_SUPABASE  
+from src.core.config import DATABASE_URL  
 
 engine = create_engine(
-    URL_SUPABASE,
+    DATABASE_URL,
     connect_args={"sslmode": "require"},
     pool_pre_ping=True
 )
