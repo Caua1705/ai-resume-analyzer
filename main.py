@@ -25,20 +25,21 @@ vaga_escolhida = st.selectbox(
 arquivo = st.file_uploader("Upload PDF", type="pdf")
 
 if arquivo:
+    if st.button("Fazer análise"):
 
-    pdf_bytes = arquivo.getvalue()
+        pdf_bytes = arquivo.getvalue()
 
-    file_path = upload_curriculo(
-        pdf_bytes,
-        vaga_escolhida.name
-    )
+        file_path = upload_curriculo(
+            pdf_bytes,
+            vaga_escolhida.name
+        )
 
-    texto = extrair_texto_pdf(pdf_bytes)
+        texto = extrair_texto_pdf(pdf_bytes)
 
-    resposta = analisar_curriculo(
-        vaga_escolhida,
-        texto,
-        OPENAI_API_KEY
-    )
+        resposta = analisar_curriculo(
+            vaga_escolhida,
+            texto,
+            OPENAI_API_KEY
+        )
 
-    st.write(resposta.model_dump())
+        st.write(resposta.model_dump())
