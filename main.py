@@ -6,7 +6,7 @@ from src.database.db_init import criar_tabelas
 
 from src.services.pdf_service import extrair_texto_pdf
 from src.services.storage_service import upload_curriculo
-from src.services.resume_analysis_service import analisar_curriculo
+from src.services.resume_analysis_llm_service import LLMResumeAnalyzer
 
 from src.core.config import OPENAI_API_KEY
 
@@ -36,10 +36,9 @@ if arquivo:
 
         texto = extrair_texto_pdf(pdf_bytes)
 
-        resposta = analisar_curriculo(
-            vaga_escolhida,
-            texto,
-            OPENAI_API_KEY
-        )
+        instancia = LLMResumeAnalyzer(OPENAI_API_KEY)
 
-        st.write(resposta.model_dump())
+        response = instancia.analyze(vaga_escolhida,
+                                     texto)
+
+        st.write(response.model_dump())
