@@ -5,14 +5,15 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from typing import List
 from src.database.base import Base
-
+import uuid
 
 class Resume(Base):
     __tablename__ = "resumes"
 
-    id: Mapped[UUID] = mapped_column(
+    id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        primary_key=True
+        primary_key=True,
+        default=uuid.uuid4
     )
 
     job_id: Mapped[UUID] = mapped_column(
