@@ -2,26 +2,38 @@ from langchain_openai import ChatOpenAI
 from src.prompts.resume_analysis_prompt import build_resume_analysis_prompt
 from src.schemas.candidate_analysis_schema import CandidateAnalysis
 
+
 class LLMResumeAnalyzer:
 
-    def __init__(self, api_key):
-        prompt = build_resume_analysis_prompt()
+    def __init__(self, api_key: str):
 
         model = ChatOpenAI(
             model="gpt-4o-mini",
             api_key=api_key
         )
 
-        structured = model.with_structured_output(CandidateAnalysis)
+        structured_model = model.with_structured_output(
+            CandidateAnalysis
+        )
 
-        self.chain = prompt | structured
+        prompt = build_resume_analysis_prompt()
 
-    def analyze(self, job, texto):
+        self.chain = prompt | structured_model
 
-        return self.chain.invoke({
-            "job_name": job.name,
-            "main_activities": job.main_activities,
-            "prerequisites": job.prerequisites,
-            "differentials": job.differentials,
-            "curriculo": texto
-        })
+
+    def analyze(self, job, resumes_texts: list[str]):
+
+        inputs = [
+            {
+                "job_name": job.name,
+                "main_activities": job.main_activities,
+                "prerequisites": job.prerequisites,
+                "differentials": job.differentials,
+                "curriculo": texto
+            }
+            for texto in resumes_texts
+        ]
+
+        responses = self.chain.batch(inputs)
+
+        return responses
