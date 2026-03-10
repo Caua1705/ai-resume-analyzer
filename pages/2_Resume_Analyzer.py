@@ -17,6 +17,7 @@ from src.services.ranking_service import build_ranking_dataframe
 from src.ui.analyzer_job_metrics import render_job_metrics
 from src.ui.analyzer_section_divider import render_section_divider
 
+
 st.set_page_config(
     page_title="AI Resume Analyzer",
     layout="wide"
@@ -26,6 +27,7 @@ criar_tabelas()
 
 if "uploader_key" not in st.session_state:
     st.session_state["uploader_key"] = 0
+
 
 def main():
 
@@ -48,24 +50,26 @@ def main():
         if analisar and arquivos:
 
             if len(arquivos) > 10:
-                st.error("Você só pode enviar no máximo 10 currículos.")
+                st.error("You can upload a maximum of 10 resumes.")
                 st.stop()
 
+            status = st.empty()
             progress_bar = st.progress(0)
 
-            with st.spinner("Analisando currículos com IA..."):
+            status.write("Extracting text from resumes...")
+            progress_bar.progress(30)
 
-                progress_bar.progress(10)
 
-                run_resume_analysis_pipeline(
-                    arquivos,
-                    vaga_escolhida,
-                    edu_repo,
-                    resume_repo,
-                    analysis_repo
-                )
+            run_resume_analysis_pipeline(
+                arquivos,
+                vaga_escolhida,
+                edu_repo,
+                resume_repo,
+                analysis_repo
+            )
 
-                progress_bar.progress(100)
+            progress_bar.progress(100)
+            status.write("Analysis completed.")
 
             st.session_state["uploader_key"] += 1
             st.rerun()
@@ -86,7 +90,7 @@ def main():
                 render_section_divider()
                 render_ranking(df_analises)
             else:
-                st.info("Nenhum currículo analisado para essa vaga ainda.")
+                st.info("No resumes analyzed for this job yet.")
 
 
 if __name__ == "__main__":
