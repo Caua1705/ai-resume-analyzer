@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from src.models.education_levels_model import EducationLevel
-
+from typing import List
 
 class EducationLevelRepository:
 
@@ -17,3 +17,9 @@ class EducationLevelRepository:
         result = self.db.execute(query)
 
         return result.scalars().first()
+    
+    #METODO TESTE
+    def get_all(self) -> List[EducationLevel]:
+        query  = select(EducationLevel)
+        result = self.db.execute(query)
+        return result.scalars().all()
