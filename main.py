@@ -13,6 +13,7 @@ from src.services.analysis_pipeline_service import run_resume_analysis_pipeline
 from src.ui.sidebar import render_sidebar
 from src.ui.header import render_header
 from src.ui.ranking_table import render_ranking
+from src.services.ranking_service import build_ranking_dataframe
 from src.ui.job_metrics import render_job_metrics
 
 
@@ -50,7 +51,11 @@ def main():
                 st.error("Você só pode enviar no máximo 10 currículos.")
                 st.stop()
 
+            progress_bar = st.progress(0)
+
             with st.spinner("Analisando currículos com IA..."):
+
+                progress_bar.progress(10)
 
                 run_resume_analysis_pipeline(
                     arquivos,
@@ -60,7 +65,7 @@ def main():
                     analysis_repo
                 )
 
-            st.success("Currículos analisados com sucesso.")
+                progress_bar.progress(100)
 
             st.session_state["uploader_key"] += 1
             st.rerun()
@@ -77,7 +82,8 @@ def main():
             )
 
             if analises:
-                render_ranking(analises)
+                df_analises = build_ranking_dataframe(analises)
+                render_ranking(df_analises)
             else:
                 st.info("Nenhum currículo analisado para essa vaga ainda.")
 
