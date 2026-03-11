@@ -1,4 +1,5 @@
 import streamlit as st
+from src.ui.analyzer_section_divider import render_section_divider
 
 def render_sidebar(jobs, uploader_key):
 
@@ -12,7 +13,7 @@ def render_sidebar(jobs, uploader_key):
             format_func=lambda j: j.name
         )
 
-        st.markdown("<hr style='margin-top:10px;margin-bottom:15px;'>", unsafe_allow_html=True)
+        render_section_divider()
 
         st.markdown("**Enviar currículos (PDF)**")
         st.caption("Máximo de 10 arquivos")

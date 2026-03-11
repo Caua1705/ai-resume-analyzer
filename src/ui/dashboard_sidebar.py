@@ -1,35 +1,32 @@
 import streamlit as st
+from src.ui.analyzer_section_divider import render_section_divider
 
 
-def render_dashboard_sidebar(jobs, education_levels):
+def render_dashboard_sidebar(jobs):
 
     with st.sidebar:
 
-        st.title("Dashboard Filters")
+        st.title("📊 Dashboard")
 
-        # ---------- JOB ----------
+        render_section_divider()
+
+        st.markdown("**Filtros de análise**")
+
         job_options = ["All Jobs"] + jobs
 
         selected_job = st.selectbox(
-            "Job",
+            "Selecionar vaga",
             job_options,
             format_func=lambda j: j if j == "All Jobs" else j.name
         )
 
-        # ---------- EDUCATION ----------
-        selected_education = st.multiselect(
-            "Education Level",
-            education_levels,
-            default=education_levels,  # todos selecionados por padrão
-            format_func=lambda e: e.name
-        )
-
-        # ---------- SCORE ----------
         score_range = st.slider(
-            "Score Range",
+            "Score dos candidatos",
             min_value=0,
             max_value=100,
             value=(0, 100)
         )
 
-    return selected_job, selected_education, score_range
+        render_section_divider()
+
+    return selected_job, score_range

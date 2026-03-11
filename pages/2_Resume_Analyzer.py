@@ -9,11 +9,12 @@ from src.repositories.analysis_repository import AnalysisRepository
 from src.repositories.resume_repository import ResumeRepository
 
 from src.services.analysis_pipeline_service import run_resume_analysis_pipeline
+from src.services.dataframe_service import analyses_to_dataframe
+from src.services.ranking_service import build_ranking_dataframe
 
 from src.ui.analyzer_sidebar import render_sidebar
 from src.ui.analyzer_header import render_header
 from src.ui.analyzer_ranking_table import render_ranking
-from src.services.ranking_service import build_ranking_dataframe
 from src.ui.analyzer_job_metrics import render_job_metrics
 from src.ui.analyzer_section_divider import render_section_divider
 
@@ -59,7 +60,6 @@ def main():
             status.write("Extracting text from resumes...")
             progress_bar.progress(30)
 
-
             run_resume_analysis_pipeline(
                 arquivos,
                 vaga_escolhida,
@@ -76,19 +76,23 @@ def main():
 
         if vaga_escolhida:
 
-            analises = analysis_repo.get_all(
+            analyses = analysis_repo.get_filtered(
                 job_id=vaga_escolhida.id
             )
 
             render_job_metrics(
                 vaga_escolhida,
-                analises
+                analyses
             )
 
-            if analises:
-                df_analises = build_ranking_dataframe(analises)
+            if analyses:
+
+                df_base = analyses_to_dataframe(analyses)
+                df_ranking = build_ranking_dataframe(df_base)
+
                 render_section_divider()
-                render_ranking(df_analises)
+                render_ranking(df_ranking)
+
             else:
                 st.info("No resumes analyzed for this job yet.")
 
