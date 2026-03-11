@@ -1,18 +1,26 @@
 import pandas as pd
 
-def build_ranking_dataframe(analises):
 
-    dados = []
+def build_ranking_dataframe(df):
 
-    for a in analises:
-        dados.append({
-            "Score": a.score,
-            "Languages": ", ".join(a.languages) if a.languages else "Not specified",
-            "Strengths": (a.strengths[:80] + "...") if len(a.strengths) > 80 else a.strengths,
-            "Weaknesses": (a.weaknesses[:80] + "...") if len(a.weaknesses) > 80 else a.weaknesses,
-            "Created": pd.to_datetime(a.created_at).strftime("%d/%m/%Y %H:%M")
-        })
+    df = df.copy()
 
-    df = pd.DataFrame(dados)
+    df["Languages"] = df["languages"].apply(
+        lambda x: ", ".join(x) if x else "Not specified"
+    )
 
-    return df.sort_values(by="Score", ascending=False)
+    df["Strengths"] = df["strengths"].apply(
+        lambda x: x[:80] + "..." if x and len(x) > 80 else x
+    )
+
+    df["Weaknesses"] = df["weaknesses"].apply(
+        lambda x: x[:80] + "..." if x and len(x) > 80 else x
+    )
+
+    df["Created"] = pd.to_datetime(df["created_at"]).dt.strftime("%d/%m/%Y %H:%M")
+
+    df = df.rename(columns={"score": "Score"})
+
+    return df[
+        ["Score", "Languages", "Strengths", "Weaknesses", "Created"]
+    ].sort_values(by="Score", ascending=False)
