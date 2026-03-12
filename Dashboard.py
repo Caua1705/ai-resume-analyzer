@@ -1,5 +1,11 @@
+from src.services.dashboard_service import (
+    calcular_score_distribution,
+    calcular_media_por_educacao
+)
+
 import streamlit as st
 
+from src.ui.analyzer_section_divider import render_section_divider
 from src.database.session import SessionLocal
 from src.database.db_init import criar_tabelas
 
@@ -7,9 +13,18 @@ from src.repositories.job_repository import JobRepository
 from src.repositories.analysis_repository import AnalysisRepository
 
 from src.services.dataframe_service import analyses_to_dataframe
-from src.services.dashboard_service import build_dashboard_dataframe
+from src.services.dashboard_service import calcular_metricas_dashboard
 
 from src.ui.dashboard_sidebar import render_dashboard_sidebar
+from src.ui.dashboard_metrics import render_dashboard_metrics
+from src.ui.dashboard_styles import aplicar_estilo_metricas
+from src.ui.dashboard_charts import (
+    render_score_distribution,
+    render_education_score_chart
+)
+
+from src.core.config import SUPABASE_URL
+
 
 st.set_page_config(
     page_title="Dashboard",
@@ -17,6 +32,20 @@ st.set_page_config(
 )
 
 criar_tabelas()
+
+
+def score_badge(score):
+
+    if score >= 85:
+        return "🟢 Excellent"
+    elif score >= 70:
+        return "🟡 Good"
+    elif score >= 50:
+        return "🟠 Moderate"
+    elif score >= 30:
+        return "🔴 Weak"
+    else:
+        return "⚫ Very Weak"
 
 
 def main():
@@ -31,6 +60,11 @@ def main():
         selected_job, score_range = render_dashboard_sidebar(jobs)
 
         if selected_job == "All Jobs":
+            st.title("Candidate Analytics — All Jobs")
+        else:
+            st.title(f"Candidate Analytics — {selected_job.name}")
+
+        if selected_job == "All Jobs":
             analyses = analysis_repo.get_filtered(
                 score_range=score_range
             )
@@ -42,28 +76,87 @@ def main():
 
         df_base = analyses_to_dataframe(analyses)
 
-        df_dashboard = build_dashboard_dataframe(df_base)
+        metrics = calcular_metricas_dashboard(df_base)
 
-        st.write(df_dashboard)
+        aplicar_estilo_metricas({
+            "col1": "#2563eb",
+            "col2": "#10b981",
+            "col3": "#f59e0b",
+            "col4": "#ef4444"
+        })
 
+        render_dashboard_metrics(metrics)
 
-        total_candidatos = len(df_dashboard)
-        media_scores = df_dashboard['score'].mean()
-        maior_score = df_dashboard['score'].max()
-        qualificados = df_dashboard.loc[df_dashboard['score']>=70] 
+        score_dist = calcular_score_distribution(df_base)
+        media = calcular_media_por_educacao(df_base)
 
+        col1, col2 = st.columns(2)
 
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            st.metric('Total Candidates Analyzed', total_candidatos)
-        with col2:
-            st.metric('Average Candidate Score', media_scores)
-        with col3:
-            st.metric('Best Candidate Score', maior_score)
-        with col4:
-            st.metric('Qualified Candidate', len(qualificados))
+    with col1:
+        render_score_distribution(score_dist)
 
+    with col2:
+        render_education_score_chart(media)
 
+    render_section_divider()
+# ----------------------------------------------------------------------------
+    st.subheader("Top Candidates")
+
+    if df_base.empty:
+        st.info("No candidates found with the selected filters.")
+        return
+
+    df_base["resume"] = df_base["file_path"].apply(
+        lambda x: f"{SUPABASE_URL}/storage/v1/object/public/curriculos/{x}"
+    )
+
+    df_base = df_base.sort_values("score", ascending=False)
+
+    top_candidates = df_base.head(3)
+
+    for _, row in top_candidates.iterrows():
+
+        badge = score_badge(row["score"])
+
+        languages = (
+            ", ".join(row["languages"][:2])
+            if row["languages"]
+            else "No languages"
+        )
+
+        titulo = f"Score {row['score']} — {row['education_level']} — {languages} {badge}"
+
+        with st.expander(titulo):
+
+            col1, col2 = st.columns([3,1])
+
+            with col1:
+
+                st.write("**Languages**")
+                st.write(
+                    ", ".join(row["languages"])
+                    if row["languages"]
+                    else "Not specified"
+                )
+
+                st.write("**Strengths**")
+                st.write(row["strengths"])
+
+                st.write("**Weaknesses**")
+                st.write(row["weaknesses"])
+
+                st.write("**AI Opinion**")
+                st.write(row["opinion"])
+
+            with col2:
+
+                st.link_button(
+                    "Open Resume",
+                    row["resume"],
+                    use_container_width=True
+                )
+
+    render_section_divider()
 
 if __name__ == "__main__":
     main()
