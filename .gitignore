@@ -1,73 +1,49 @@
-# ======================
-# Python
-# ======================
-
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.py,cover
-*.so
-
-# ======================
-# Virtual environments
-# ======================
+*.py[cod]
+*$py.class
 
 .venv/
 venv/
 env/
 
-# ======================
-# Environment variables
-# ======================
-
 .env
 .env.*
 !.env.example
 
-# ======================
-# IDE
-# ======================
-
 .vscode/
 .idea/
-
-# ======================
-# OS files
-# ======================
 
 .DS_Store
 Thumbs.db
 
-# ======================
-# Logs
-# ======================
-
 *.log
 
-# ======================
-# Streamlit
-# ======================
-
 .streamlit/secrets.toml
-
-# ======================
-# Build / packaging
-# ======================
 
 build/
 dist/
 *.egg-info/
-
-# ======================
-# Jupyter
-# ======================
+.eggs/
+pip-wheel-metadata/
 
 .ipynb_checkpoints/
 
-# ======================
-# Temporary files
-# ======================
-
 *.tmp
 *.temp
+
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+.mypy_cache/
+.dmypy.json
+
+.cache/
+
+*.sqlite3
+*.db
+
+uploads/
+data/
+storage/

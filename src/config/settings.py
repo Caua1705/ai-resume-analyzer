@@ -1,22 +1,20 @@
 import os
-
 from dotenv import load_dotenv
 
-
 load_dotenv()
-
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+SUPABASE_BUCKET = "curriculos"
 
 OPENAI_API_KEY = os.getenv("OPENAI_KEY")
-
+LLM_MODEL = "gpt-4o-mini"
 
 MAX_RESUME_UPLOAD = 10
 TOP_CANDIDATES_LIMIT = 3
-
+QUALIFIED_SCORE_THRESHOLD = 70
 
 SCORE_COLORS = {
     "Very Weak": "#EF4444",
