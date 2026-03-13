@@ -1,5 +1,7 @@
 import pandas as pd
 
+from src.config.settings import QUALIFIED_SCORE_THRESHOLD
+
 
 def calculate_dashboard_metrics(df):
 
@@ -14,7 +16,7 @@ def calculate_dashboard_metrics(df):
     total_candidates = len(df)
     avg_score = df["score"].mean()
     best_score = df["score"].max()
-    qualified = len(df[df["score"] >= 70])
+    qualified = len(df[df["score"] >= QUALIFIED_SCORE_THRESHOLD])
 
     return {
         "total": total_candidates,
@@ -57,6 +59,16 @@ def calculate_score_distribution(df):
 
 
 def calculate_average_score_by_education(df):
+
+    if df.empty:
+        return pd.DataFrame({
+            "education_level": [],
+            "score": []
+        })
+
+    df = df.copy()
+
+    df["score"] = pd.to_numeric(df["score"], errors="coerce")
 
     return (
         df[df["education_level"] != "Not Informed"]
