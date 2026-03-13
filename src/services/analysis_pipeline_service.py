@@ -1,7 +1,7 @@
 from src.services.pdf_service import extrair_texto_pdf
 from src.services.storage_service import upload_curriculo
 from src.services.resume_analysis_llm_service import LLMResumeAnalyzer
-from src.core.config import OPENAI_API_KEY
+from src.config.config import OPENAI_API_KEY
 
 
 def run_resume_analysis_pipeline(
