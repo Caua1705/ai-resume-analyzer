@@ -2,7 +2,7 @@ import streamlit as st
 from src.ui.dashboard_helpers import score_badge
 
 
-def render_top_candidates(df, supabase_url):
+def render_top_candidates(df):
 
     st.subheader("Top Candidates")
 
@@ -10,17 +10,7 @@ def render_top_candidates(df, supabase_url):
         st.info("No candidates found with the selected filters.")
         return
 
-    df = df.copy()
-
-    df["resume"] = df["file_path"].apply(
-        lambda x: f"{supabase_url}/storage/v1/object/public/curriculos/{x}"
-    )
-
-    df = df.sort_values("score", ascending=False)
-
-    top_candidates = df.head(3)
-
-    for _, row in top_candidates.iterrows():
+    for _, row in df.iterrows():
 
         badge = score_badge(row["score"])
 
@@ -34,7 +24,7 @@ def render_top_candidates(df, supabase_url):
 
         with st.expander(titulo):
 
-            col1, col2 = st.columns([3,1])
+            col1, col2 = st.columns([3, 1])
 
             with col1:
 

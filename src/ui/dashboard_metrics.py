@@ -1,4 +1,4 @@
-from src.config.ui_config import METRIC_COLORS
+from src.config.config import METRIC_COLORS
 import streamlit as st
 
 

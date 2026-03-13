@@ -1,7 +1,7 @@
 import plotly.express as px
 import streamlit as st
 
-from src.config.ui_config import SCORE_COLORS, EDUCATION_COLORS
+from src.config.config import SCORE_COLORS, EDUCATION_COLORS
 
 
 def render_score_distribution(df):
