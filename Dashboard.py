@@ -1,3 +1,4 @@
+from src.services.ranking_service import preparar_top_candidates
 from src.services.dashboard_service import (
     calcular_score_distribution,
     calcular_media_por_educacao
@@ -24,7 +25,7 @@ from src.ui.dashboard_charts import (
     render_education_score_chart
 )
 
-from src.core.config import SUPABASE_URL
+from src.config.config import SUPABASE_URL
 
 
 st.set_page_config(
@@ -82,7 +83,9 @@ def main():
 
     render_section_divider()
 
-    render_top_candidates(df_base, SUPABASE_URL)
+    top_candidates = preparar_top_candidates(df_base, SUPABASE_URL)
+
+    render_top_candidates(top_candidates)
 
     render_section_divider()
 
