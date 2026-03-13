@@ -1,7 +1,4 @@
-import pandas as pd
-
-
-def build_ranking_dataframe(df):
+def build_ranking_dataframe(df, supabase_url):
 
     df = df.copy()
 
@@ -17,10 +14,27 @@ def build_ranking_dataframe(df):
         lambda x: x[:80] + "..." if len(x) > 80 else x
     )
 
-    df["Created"] = pd.to_datetime(df["created_at"]).dt.strftime("%d/%m/%Y %H:%M")
-
     df = df.rename(columns={"score": "Score"})
 
+    df["Resume"] = df["file_path"].apply(
+        lambda x: f"{supabase_url}/storage/v1/object/public/curriculos/{x}"
+    )
     return df[
-        ["Score", "Languages", "Strengths", "Weaknesses", "Created"]
+        ["Score", "Languages", "Strengths", "Weaknesses", "Resume"]
     ].sort_values(by="Score", ascending=False)
+
+
+def preparar_top_candidates(df, supabase_url, limit=3):
+
+    if df.empty:
+        return df
+
+    df = df.copy()
+
+    df["resume"] = df["file_path"].apply(
+        lambda x: f"{supabase_url}/storage/v1/object/public/curriculos/{x}"
+    )
+
+    df = df.sort_values("score", ascending=False)
+
+    return df.head(limit)
