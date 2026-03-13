@@ -1,4 +1,6 @@
 from supabase import create_client
-from src.config.config import SUPABASE_URL, SUPABASE_KEY
+
+from src.config.settings import SUPABASE_KEY, SUPABASE_URL
+
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
