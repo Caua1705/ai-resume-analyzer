@@ -1,5 +1,6 @@
 import streamlit as st
-from src.ui.dashboard_helpers import score_badge
+
+from src.ui.dashboard_metrics import score_badge
 
 
 def render_top_candidates(df):
@@ -7,7 +8,7 @@ def render_top_candidates(df):
     st.subheader("Top Candidates")
 
     if df.empty:
-        st.info("No candidates found with the selected filters.")
+        st.info("No candidates found.")
         return
 
     for _, row in df.iterrows():
@@ -20,9 +21,13 @@ def render_top_candidates(df):
             else "No languages"
         )
 
-        titulo = f"Score {row['score']} — {row['education_level']} — {languages} {badge}"
+        title = (
+            f"Score {row['score']} — "
+            f"{row['education_level']} — "
+            f"{languages} {badge}"
+        )
 
-        with st.expander(titulo):
+        with st.expander(title):
 
             col1, col2 = st.columns([3, 1])
 
@@ -49,5 +54,5 @@ def render_top_candidates(df):
                 st.link_button(
                     "Open Resume",
                     row["resume"],
-                    use_container_width=True
+                    use_container_width=True,
                 )

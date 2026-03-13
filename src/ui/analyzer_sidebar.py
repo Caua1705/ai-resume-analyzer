@@ -1,38 +1,40 @@
 import streamlit as st
-from src.ui.analyzer_section_divider import render_section_divider
+
+from src.ui.analyzer_layout import render_section_divider
+
 
 def render_sidebar(jobs, uploader_key):
 
     with st.sidebar:
 
-        st.title("📄 Análise de currículos")
+        st.title("📄 Resume Analysis")
 
-        vaga = st.selectbox(
-            "Selecionar vaga",
+        selected_job = st.selectbox(
+            "Select Job",
             jobs,
-            format_func=lambda j: j.name
+            format_func=lambda j: j.name,
         )
 
         render_section_divider()
 
-        st.markdown("**Enviar currículos (PDF)**")
-        st.caption("Máximo de 10 arquivos")
+        st.markdown("**Upload Resumes (PDF)**")
+        st.caption("Maximum 10 files")
 
-        arquivos = st.file_uploader(
-            "Arraste ou selecione arquivos",
+        files = st.file_uploader(
+            "Drag or select files",
             type="pdf",
             accept_multiple_files=True,
             label_visibility="collapsed",
-            key=f"uploader_{uploader_key}"
+            key=f"uploader_{uploader_key}",
         )
 
-        if arquivos:
-            st.caption(f"{len(arquivos)} arquivo(s) selecionado(s)")
+        if files:
+            st.caption(f"{len(files)} file(s) selected")
 
-        analisar = st.button(
-            "🚀 Analisar currículos",
+        analyze = st.button(
+            "🚀 Analyze Resumes",
             type="primary",
-            use_container_width=True
+            use_container_width=True,
         )
 
-    return vaga, arquivos, analisar
+    return selected_job, files, analyze

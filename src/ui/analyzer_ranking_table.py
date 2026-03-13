@@ -1,7 +1,9 @@
 import streamlit as st
 
-def render_ranking(df):
-    st.subheader("Ranking de candidatos")
+
+def render_candidate_ranking(df):
+
+    st.subheader("Candidate Ranking")
 
     st.data_editor(
         df,
@@ -10,8 +12,8 @@ def render_ranking(df):
             "Resume": st.column_config.LinkColumn(
                 "Resume",
                 help="Open candidate resume",
-                display_text="Open resume"
+                display_text="Open resume",
             )
         },
-        use_container_width=True
+        use_container_width=True,
     )
