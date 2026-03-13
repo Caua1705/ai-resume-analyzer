@@ -1,6 +1,7 @@
-from sqlalchemy.orm import Session
+from typing import List, Optional, Tuple
+
 from sqlalchemy import select
-from typing import List
+from sqlalchemy.orm import Session
 
 from src.models.analysis_model import Analysis
 
@@ -12,8 +13,8 @@ class AnalysisRepository:
 
     def get_filtered(
         self,
-        job_id=None,
-        score_range=None
+        job_id: Optional[str] = None,
+        score_range: Optional[Tuple[int, int]] = None,
     ) -> List[Analysis]:
 
         query = select(Analysis)
@@ -27,7 +28,7 @@ class AnalysisRepository:
             query = query.where(
                 Analysis.score.between(
                     score_range[0],
-                    score_range[1]
+                    score_range[1],
                 )
             )
 
@@ -44,11 +45,11 @@ class AnalysisRepository:
         resume_id,
         job_id,
         education_level_id,
-        score,
-        opinion,
-        strengths,
-        weaknesses,
-        languages
+        score: float,
+        opinion: str,
+        strengths: str,
+        weaknesses: str,
+        languages,
     ) -> Analysis:
 
         analysis = Analysis(
@@ -59,7 +60,7 @@ class AnalysisRepository:
             opinion=opinion,
             strengths=strengths,
             weaknesses=weaknesses,
-            languages=languages
+            languages=languages,
         )
 
         self.db.add(analysis)
