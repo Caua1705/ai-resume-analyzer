@@ -1,7 +1,10 @@
 import os
+
 from dotenv import load_dotenv
 
+
 load_dotenv()
+
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -10,12 +13,17 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 OPENAI_API_KEY = os.getenv("OPENAI_KEY")
 
+
+MAX_RESUME_UPLOAD = 10
+TOP_CANDIDATES_LIMIT = 3
+
+
 SCORE_COLORS = {
     "Very Weak": "#EF4444",
     "Weak": "#F97316",
     "Moderate": "#FACC15",
     "Good": "#10B981",
-    "Excellent": "#2563EB"
+    "Excellent": "#2563EB",
 }
 
 EDUCATION_COLORS = {
@@ -27,12 +35,12 @@ EDUCATION_COLORS = {
     "Master's Degree": "#6366F1",
     "Doctorate": "#7C3AED",
     "Course / Certification": "#FACC15",
-    "Not Informed": "#9CA3AF"
+    "Not Informed": "#9CA3AF",
 }
 
 METRIC_COLORS = {
     "col1": "#2563EB",
     "col2": "#10B981",
     "col3": "#F59E0B",
-    "col4": "#EF4444"
+    "col4": "#EF4444",
 }
