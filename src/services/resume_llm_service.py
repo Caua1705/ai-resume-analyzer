@@ -1,4 +1,5 @@
 from langchain_openai import ChatOpenAI
+
 from src.prompts.resume_analysis_prompt import build_resume_analysis_prompt
 from src.schemas.candidate_analysis_schema import CandidateAnalysis
 
@@ -9,7 +10,7 @@ class LLMResumeAnalyzer:
 
         model = ChatOpenAI(
             model="gpt-4o-mini",
-            api_key=api_key
+            api_key=api_key,
         )
 
         structured_model = model.with_structured_output(
@@ -20,7 +21,6 @@ class LLMResumeAnalyzer:
 
         self.chain = prompt | structured_model
 
-
     def analyze(self, job, resumes_texts: list[str]):
 
         inputs = [
@@ -29,9 +29,9 @@ class LLMResumeAnalyzer:
                 "main_activities": job.main_activities,
                 "prerequisites": job.prerequisites,
                 "differentials": job.differentials,
-                "curriculo": texto
+                "curriculo": text,
             }
-            for texto in resumes_texts
+            for text in resumes_texts
         ]
 
         responses = self.chain.batch(inputs)

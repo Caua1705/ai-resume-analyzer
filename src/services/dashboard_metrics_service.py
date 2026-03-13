@@ -1,30 +1,30 @@
 import pandas as pd
 
 
-def calcular_metricas_dashboard(df):
+def calculate_dashboard_metrics(df):
 
     if df.empty:
         return {
             "total": 0,
             "avg": 0,
             "best": 0,
-            "qualified": 0
+            "qualified": 0,
         }
 
-    total_candidatos = len(df)
-    media_scores = df["score"].mean()
-    maior_score = df["score"].max()
-    qualificados = len(df[df["score"] >= 70])
+    total_candidates = len(df)
+    avg_score = df["score"].mean()
+    best_score = df["score"].max()
+    qualified = len(df[df["score"] >= 70])
 
     return {
-        "total": total_candidatos,
-        "avg": media_scores,
-        "best": maior_score,
-        "qualified": qualificados
+        "total": total_candidates,
+        "avg": avg_score,
+        "best": best_score,
+        "qualified": qualified,
     }
 
 
-def calcular_score_distribution(df):
+def calculate_score_distribution(df):
 
     bins = [0, 30, 50, 70, 85, 100]
 
@@ -33,19 +33,19 @@ def calcular_score_distribution(df):
         "Weak",
         "Moderate",
         "Good",
-        "Excellent"
+        "Excellent",
     ]
 
     df = df.copy()
 
-    df["score_distribuicao"] = pd.cut(
+    df["score_category"] = pd.cut(
         df["score"],
         bins=bins,
-        labels=labels
+        labels=labels,
     )
 
     score_dist = (
-        df["score_distribuicao"]
+        df["score_category"]
         .value_counts()
         .sort_index()
         .reset_index()
@@ -56,14 +56,12 @@ def calcular_score_distribution(df):
     return score_dist
 
 
-def calcular_media_por_educacao(df):
+def calculate_average_score_by_education(df):
 
-    media = (
+    return (
         df[df["education_level"] != "Not Informed"]
         .groupby("education_level")["score"]
         .mean()
         .reset_index()
         .sort_values("score", ascending=False)
     )
-
-    return media

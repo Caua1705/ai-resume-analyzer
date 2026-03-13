@@ -19,12 +19,13 @@ def build_ranking_dataframe(df, supabase_url):
     df["Resume"] = df["file_path"].apply(
         lambda x: f"{supabase_url}/storage/v1/object/public/curriculos/{x}"
     )
+
     return df[
         ["Score", "Languages", "Strengths", "Weaknesses", "Resume"]
     ].sort_values(by="Score", ascending=False)
 
 
-def preparar_top_candidates(df, supabase_url, limit=3):
+def prepare_top_candidates(df, supabase_url, limit=3):
 
     if df.empty:
         return df
