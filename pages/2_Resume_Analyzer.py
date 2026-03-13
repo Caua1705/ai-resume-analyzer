@@ -17,7 +17,7 @@ from src.ui.analyzer_header import render_header
 from src.ui.analyzer_ranking_table import render_ranking
 from src.ui.analyzer_job_metrics import render_job_metrics
 from src.ui.analyzer_section_divider import render_section_divider
-
+from src.config.config import SUPABASE_URL
 
 st.set_page_config(
     page_title="AI Resume Analyzer",
@@ -88,12 +88,16 @@ def main():
             if analyses:
 
                 df_base = analyses_to_dataframe(analyses)
-                df_ranking = build_ranking_dataframe(df_base)
+                df_ranking = build_ranking_dataframe(df_base, SUPABASE_URL)
 
                 render_section_divider()
                 render_ranking(df_ranking)
-
-            else:
+                render_section_divider()
+                st.caption(
+    "Analysis generated automatically by AI Resume Analyzer. "
+    "Use the resume links to review candidates in detail."
+)
+            else:   
                 st.info("No resumes analyzed for this job yet.")
 
 
