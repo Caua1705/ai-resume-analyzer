@@ -1,3 +1,10 @@
+from src.config.settings import TOP_CANDIDATES_LIMIT, SUPABASE_BUCKET
+
+
+def build_resume_url(file_path: str, supabase_url: str) -> str:
+    return f"{supabase_url}/storage/v1/object/public/{SUPABASE_BUCKET}/{file_path}"
+
+
 def build_ranking_dataframe(df, supabase_url):
 
     df = df.copy()
@@ -17,7 +24,7 @@ def build_ranking_dataframe(df, supabase_url):
     df = df.rename(columns={"score": "Score"})
 
     df["Resume"] = df["file_path"].apply(
-        lambda x: f"{supabase_url}/storage/v1/object/public/curriculos/{x}"
+        lambda x: build_resume_url(x, supabase_url)
     )
 
     return df[
@@ -25,7 +32,11 @@ def build_ranking_dataframe(df, supabase_url):
     ].sort_values(by="Score", ascending=False)
 
 
-def prepare_top_candidates(df, supabase_url, limit=3):
+def prepare_top_candidates(
+    df,
+    supabase_url,
+    limit=TOP_CANDIDATES_LIMIT
+):
 
     if df.empty:
         return df
@@ -33,7 +44,7 @@ def prepare_top_candidates(df, supabase_url, limit=3):
     df = df.copy()
 
     df["resume"] = df["file_path"].apply(
-        lambda x: f"{supabase_url}/storage/v1/object/public/curriculos/{x}"
+        lambda x: build_resume_url(x, supabase_url)
     )
 
     df = df.sort_values("score", ascending=False)
