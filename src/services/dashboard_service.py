@@ -1,14 +1,6 @@
 import pandas as pd
 
 
-def build_dashboard_dataframe(df):
-
-    df = df.copy()
-
-    df["created_at"] = pd.to_datetime(df["created_at"])
-
-    return df
-
 def calcular_metricas_dashboard(df):
 
     if df.empty:
@@ -26,10 +18,11 @@ def calcular_metricas_dashboard(df):
 
     return {
         "total": total_candidatos,
-        "avg": media_scores if pd.notna(media_scores) else 0,
-        "best": maior_score if pd.notna(maior_score) else 0,
+        "avg": media_scores,
+        "best": maior_score,
         "qualified": qualificados
     }
+
 
 def calcular_score_distribution(df):
 
@@ -51,7 +44,14 @@ def calcular_score_distribution(df):
         labels=labels
     )
 
-    score_dist = df["score_distribuicao"].value_counts().sort_index()
+    score_dist = (
+        df["score_distribuicao"]
+        .value_counts()
+        .sort_index()
+        .reset_index()
+    )
+
+    score_dist.columns = ["score_category", "count"]
 
     return score_dist
 
@@ -59,11 +59,11 @@ def calcular_score_distribution(df):
 def calcular_media_por_educacao(df):
 
     media = (
-    df[df["education_level"] != "Not Informed"]
-    .groupby("education_level")["score"]
-    .mean()
-    .reset_index()
-    .sort_values("score", ascending=False)
-)
+        df[df["education_level"] != "Not Informed"]
+        .groupby("education_level")["score"]
+        .mean()
+        .reset_index()
+        .sort_values("score", ascending=False)
+    )
 
     return media

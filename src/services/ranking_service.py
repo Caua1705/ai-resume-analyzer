@@ -10,11 +10,11 @@ def build_ranking_dataframe(df):
     )
 
     df["Strengths"] = df["strengths"].apply(
-        lambda x: x[:80] + "..." if x and len(x) > 80 else x
+        lambda x: x[:80] + "..." if len(x) > 80 else x
     )
 
     df["Weaknesses"] = df["weaknesses"].apply(
-        lambda x: x[:80] + "..." if x and len(x) > 80 else x
+        lambda x: x[:80] + "..." if len(x) > 80 else x
     )
 
     df["Created"] = pd.to_datetime(df["created_at"]).dt.strftime("%d/%m/%Y %H:%M")
