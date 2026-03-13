@@ -1,30 +1,35 @@
 import streamlit as st
 
 from src.database.session import SessionLocal
-from src.database.db_init import criar_tabelas
+from src.database.db_init import create_tables
 
 from src.repositories.job_repository import JobRepository
 from src.repositories.education_level_repository import EducationLevelRepository
 from src.repositories.analysis_repository import AnalysisRepository
 from src.repositories.resume_repository import ResumeRepository
 
-from src.services.analysis_pipeline_service import run_resume_analysis_pipeline
-from src.services.dataframe_service import analyses_to_dataframe
+from src.services.resume_analysis_pipeline import run_resume_analysis_pipeline
+from src.services.analysis_dataframe_service import analyses_to_dataframe
 from src.services.ranking_service import build_ranking_dataframe
 
 from src.ui.analyzer_sidebar import render_sidebar
-from src.ui.analyzer_header import render_header
-from src.ui.analyzer_ranking_table import render_ranking
+from src.ui.analyzer_layout import render_header, render_section_divider
+from src.ui.analyzer_ranking_table import render_candidate_ranking
 from src.ui.analyzer_job_metrics import render_job_metrics
-from src.ui.analyzer_section_divider import render_section_divider
-from src.config.config import SUPABASE_URL
 
-st.set_page_config(
-    page_title="AI Resume Analyzer",
-    layout="wide"
-)
+from src.config.settings import SUPABASE_URL
 
-criar_tabelas()
+
+st.set_page_config(page_title="AI Resume Analyzer", layout="wide")
+
+
+@st.cache_resource
+def init_db():
+    create_tables()
+
+
+init_db()
+
 
 if "uploader_key" not in st.session_state:
     st.session_state["uploader_key"] = 0
@@ -35,22 +40,22 @@ def main():
     with SessionLocal() as db:
 
         job_repo = JobRepository(db)
-        edu_repo = EducationLevelRepository(db)
+        education_repo = EducationLevelRepository(db)
         resume_repo = ResumeRepository(db)
         analysis_repo = AnalysisRepository(db)
 
         jobs = job_repo.get_all()
 
-        vaga_escolhida, arquivos, analisar = render_sidebar(
+        selected_job, files, analyze = render_sidebar(
             jobs,
-            st.session_state["uploader_key"]
+            st.session_state["uploader_key"],
         )
 
         render_header()
 
-        if analisar and arquivos:
+        if analyze and files:
 
-            if len(arquivos) > 10:
+            if len(files) > 10:
                 st.error("You can upload a maximum of 10 resumes.")
                 st.stop()
 
@@ -61,11 +66,11 @@ def main():
             progress_bar.progress(30)
 
             run_resume_analysis_pipeline(
-                arquivos,
-                vaga_escolhida,
-                edu_repo,
+                files,
+                selected_job,
+                education_repo,
                 resume_repo,
-                analysis_repo
+                analysis_repo,
             )
 
             progress_bar.progress(100)
@@ -74,30 +79,32 @@ def main():
             st.session_state["uploader_key"] += 1
             st.rerun()
 
-        if vaga_escolhida:
+        if selected_job:
 
             analyses = analysis_repo.get_filtered(
-                job_id=vaga_escolhida.id
+                job_id=selected_job.id
             )
 
-            render_job_metrics(
-                vaga_escolhida,
-                analyses
-            )
+            render_job_metrics(selected_job, analyses)
 
             if analyses:
 
                 df_base = analyses_to_dataframe(analyses)
-                df_ranking = build_ranking_dataframe(df_base, SUPABASE_URL)
+                df_ranking = build_ranking_dataframe(
+                    df_base,
+                    SUPABASE_URL,
+                )
 
                 render_section_divider()
-                render_ranking(df_ranking)
+                render_candidate_ranking(df_ranking)
                 render_section_divider()
+
                 st.caption(
-    "Analysis generated automatically by AI Resume Analyzer. "
-    "Use the resume links to review candidates in detail."
-)
-            else:   
+                    "Analysis generated automatically by AI Resume Analyzer. "
+                    "Use the resume links to review candidates."
+                )
+
+            else:
                 st.info("No resumes analyzed for this job yet.")
 
 
