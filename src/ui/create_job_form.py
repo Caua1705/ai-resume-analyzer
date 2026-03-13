@@ -3,7 +3,7 @@ import streamlit as st
 
 def render_create_job_form():
 
-    st.title("Create New Job")
+    st.title("📌 Create New Job")
 
     st.markdown(
         "Fill in the information below to create a job "
