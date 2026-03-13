@@ -1,6 +1,7 @@
 import streamlit as st
 
 from src.ui.analyzer_layout import render_section_divider
+from src.config.settings import MAX_RESUME_UPLOAD
 
 
 def render_sidebar(jobs, uploader_key):
@@ -18,7 +19,7 @@ def render_sidebar(jobs, uploader_key):
         render_section_divider()
 
         st.markdown("**Upload Resumes (PDF)**")
-        st.caption("Maximum 10 files")
+        st.caption(f"Maximum {MAX_RESUME_UPLOAD} files")
 
         files = st.file_uploader(
             "Drag or select files",
