@@ -1,15 +1,16 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from src.database.base import Base
-from src.config.config import DATABASE_URL  
+
+from src.config.settings import DATABASE_URL
+
 
 engine = create_engine(
     DATABASE_URL,
     connect_args={"sslmode": "require"},
-    pool_pre_ping=True
+    pool_pre_ping=True,
 )
 
 SessionLocal = sessionmaker(
     bind=engine,
-    autoflush=False
+    autoflush=False,
 )
